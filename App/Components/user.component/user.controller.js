@@ -34,14 +34,13 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
-  console.log("email, pass", email, password);
   // 1) Check if email and password exist
   if (!email || !password) {
     res.status(404).json({ status: "failed" });
   }
   // 2) Check if user exists && password is correct
   const user = await User.findOne({ email }).select(
-    "+password -currentBookings"
+    "+password"
   );
 
   if (!user || !(await user.correctPassword(password, user.password))) {
@@ -51,3 +50,23 @@ exports.login = async (req, res, next) => {
   // 3) If everything ok, send token to client
   createSendToken(user, 200, req, res);
 };
+
+exports.getAllUsers = async (req, res) => {
+  const users = await User.find({});
+
+  res.status(200).json({ status: "ok", users });
+}
+
+exports.updateUser = async (req, res) => {
+  const {email} = req.body;
+  await User.findOneAndUpdate({email:email},req.body)
+
+  res.status(200).json({ status: "Updated"});
+}
+
+exports.deleteUser = async (req, res) => {
+  const {email} = req.body;
+  await User.findOneAndDelete({email:email})
+
+  res.status(200).json({ status: "Deleted"});
+}

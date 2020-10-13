@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
   skills: [skillSchema],
   lastName: {
     type: String,
-    required: [true, "Please tell us your name!"],
   },
   email: {
     type: String,

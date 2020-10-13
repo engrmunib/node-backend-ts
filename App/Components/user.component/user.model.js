@@ -1,20 +1,25 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+const skillSchema = new mongoose.Schema({
+    name: {
+      type:String,
+      required:[true, "Skill must have a name"]
+    },
+    experience: {
+      type: Number,
+    },
+    comments: {
+      type:String,
+    }
+})
+
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: [true, "Please tell us your name!"],
   },
-  skills: [
-    {
-      type: {
-        type: String
-      },
-      experience: Number,
-      comments: String,
-    }
-  ],
+  skills: [skillSchema],
   lastName: {
     type: String,
     required: [true, "Please tell us your name!"],
@@ -35,6 +40,7 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default:0
   },
+  phoneNo: [Number],
   type: {
     type: String,
     required: [true, 'A user must have a type'],

@@ -1,12 +1,9 @@
 const jwt = require("jsonwebtoken");
-const { User, Social } = require("./user.model");
-const dotenv = require("dotenv");
-
-dotenv.config({ path: "../config.env" });
+const { User } = require("./user.model");
 
 const signToken = (id) => {
-  return jwt.sign({ id }, "dejavu", {
-    expiresIn: "6d",
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_TOKEN_EXPIRY,
   });
 };
 
@@ -34,11 +31,9 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
-  // 1) Check if email and password exist
   if (!email || !password) {
     res.status(404).json({ status: "failed" });
   }
-  // 2) Check if user exists && password is correct
   const user = await User.findOne({ email }).select(
     "+password"
   );
@@ -46,8 +41,6 @@ exports.login = async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     res.status(404).json({ status: "failed" });
   }
-
-  // 3) If everything ok, send token to client
   createSendToken(user, 200, req, res);
 };
 

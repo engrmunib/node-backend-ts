@@ -1,9 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const userRoute = require("./user.component/user.route");
 const compression = require("compression");
 const app = express();
+
+const userRoute = require("./Components/user.component/user.route");
 
 app.use(cors());
 app.options("*", cors());

@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
-  name: {
+  firstName: {
+    type: String,
+    required: [true, "Please tell us your name!"],
+  },
+  lastName: {
     type: String,
     required: [true, "Please tell us your name!"],
   },
@@ -18,13 +22,17 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
     select: false,
   },
-  phoneNo: {
+  age: {
     type: Number,
+    default:0
   },
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
+  type: {
+    type: String,
+    required: [true, 'A user must a type'],
+    enum: {
+      values: ['owner', 'employee', 'temporary'],
+      message: 'User is either: owner, employee, temporary'
+    }
   },
 });
 

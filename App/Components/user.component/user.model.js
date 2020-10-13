@@ -6,6 +6,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please tell us your name!"],
   },
+  skills: [
+    {
+      type: {
+        type: String
+      },
+      experience: Number,
+      comments: String,
+    }
+  ],
   lastName: {
     type: String,
     required: [true, "Please tell us your name!"],
@@ -28,7 +37,7 @@ const userSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    required: [true, 'A user must a type'],
+    required: [true, 'A user must have a type'],
     enum: {
       values: ['owner', 'employee', 'temporary'],
       message: 'User is either: owner, employee, temporary'

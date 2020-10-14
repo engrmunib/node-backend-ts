@@ -23,12 +23,6 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 
-exports.signup = async (req, res, next) => {
-  const newUser = await User.create(req.body);
-  createSendToken(newUser, 201, req, res);
-};
-
-
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -44,6 +38,13 @@ exports.login = async (req, res, next) => {
   createSendToken(user, 200, req, res);
 };
 
+//Basic CRUD
+
+exports.signup = async (req, res, next) => {
+  const newUser = await User.create(req.body);
+  createSendToken(newUser, 201, req, res);
+};
+
 exports.getAllUsers = async (req, res) => {
   const users = await User.find({});
 
@@ -51,8 +52,7 @@ exports.getAllUsers = async (req, res) => {
 }
 
 exports.updateUser = async (req, res) => {
-  const {email} = req.body;
-  await User.findOneAndUpdate({email:email},req.body)
+  await User.findByIdAndUpdate(req.body.id,req.body)
 
   res.status(200).json({ status: "Updated"});
 }

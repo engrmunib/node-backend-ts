@@ -46,8 +46,7 @@ exports.signup = async (req, res, next) => {
 };
 
 exports.getAllUsers = async (req, res) => {
-  const users = await User.find({});
-
+  const users = await User.findAll({attributes: { exclude: ['password'] }});
   res.status(200).json({ status: "ok", users });
 }
 

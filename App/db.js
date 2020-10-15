@@ -16,5 +16,13 @@ sequelize.connectionTest = async()=>{
         console.error('Unable to connect to the database:', error);
     }
 }
+sequelize.migrateModelChanges = async()=>{
+    try {
+        await sequelize.sync({ alter: true });
+        console.log('Migrated Model Changes to DB');
+      } catch (error) {
+        console.error('Unable to migrate Model changes:', error);
+    }
+}
 
 module.exports = sequelize;

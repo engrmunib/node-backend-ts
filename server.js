@@ -10,4 +10,5 @@ const server = app.listen( port, () => {
 });
 
 db.connectionTest();
+// db.migrateModelChanges();
 

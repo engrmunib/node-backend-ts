@@ -1,5 +1,22 @@
 const bcrypt = require("bcryptjs");
 
+const { DataTypes, Model } = require('sequelize');
+
+class User extends Model {}
+
+User.init({
+  firstName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  lastName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+}, {
+  sequelize,
+  modelName: 'User' // We need to choose the model name
+});
 
 
 // userSchema.pre("save", async function (next) {
@@ -20,6 +37,5 @@ const bcrypt = require("bcryptjs");
 // };
 
 // const User = mongoose.model("User", userSchema);
-
 module.exports = {User}
 

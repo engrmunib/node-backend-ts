@@ -22,15 +22,15 @@ const createSendToken = (user, statusCode, req, res) => {
   });
 };
 
-
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(404).json({ status: "failed" });
   }
-  const user = await User.findOne({ where:{email} }).select(
-    "+password"
-  );
+  const user = await User.findOne({
+    where: { email },
+    attributes: { exclude: ["password"] },
+  });
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     res.status(404).json({ status: "failed" });
@@ -46,19 +46,19 @@ exports.signup = async (req, res, next) => {
 };
 
 exports.getAllUsers = async (req, res) => {
-  const users = await User.findAll({attributes: { exclude: ['password'] }});
+  const users = await User.findAll({ attributes: { exclude: ["password"] } });
   res.status(200).json({ status: "ok", users });
-}
+};
 
 exports.updateUser = async (req, res) => {
-  await User.findByIdAndUpdate(req.body.id,req.body)
+  const users = await User.update(req.body,{where:{email}});
 
-  res.status(200).json({ status: "Updated"});
-}
+  res.status(200).json({ status: "Updated", users });
+};
 
 exports.deleteUser = async (req, res) => {
-  const {email} = req.body;
-  await User.findOneAndDelete({email:email})
+  const { email } = req.body;
+  await User.findOneAndDelete({ email: email });
 
-  res.status(200).json({ status: "Deleted"});
-}
+  res.status(200).json({ status: "Deleted" });
+};

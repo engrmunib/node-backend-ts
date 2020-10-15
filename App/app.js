@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 app.use(compression());
 
-app.use("/user", userRoute);
+app.use("/api/user", userRoute);
 app.all("*", (req, res, next) => {
   res.status(404).send(
     {

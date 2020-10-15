@@ -8,7 +8,7 @@ const signToken = (id) => {
 };
 
 const createSendToken = (user, statusCode, req, res) => {
-  const token = signToken(user._id);
+  const token = signToken(user.user_id);
 
   // Remove password from output
   user.password = undefined;
@@ -28,11 +28,10 @@ exports.login = async (req, res, next) => {
     res.status(404).json({ status: "failed" });
   }
   const user = await User.findOne({
-    where: { email },
-    attributes: { exclude: ["password"] },
+    where: { email }
   });
 
-  if (!user || !(await user.correctPassword(password, user.password))) {
+  if (!user || !(await user.verifyPassword(password, user.password))) {
     res.status(404).json({ status: "failed" });
   }
   createSendToken(user, 200, req, res);
@@ -41,7 +40,9 @@ exports.login = async (req, res, next) => {
 //Basic CRUD
 
 exports.signup = async (req, res, next) => {
-  const newUser = await User.create(req.body);
+  let newUser = await User.create(req.body);
+  await newUser.hashPassword();
+  newUser = await newUser.save();
   createSendToken(newUser, 201, req, res);
 };
 
@@ -51,14 +52,15 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const users = await User.update(req.body,{where:{email}});
+  const {user_id} = req.body;
+  await User.update(req.body,{where:{user_id}});
 
-  res.status(200).json({ status: "Updated", users });
+  res.status(200).json({ status: "Updated" });
 };
 
 exports.deleteUser = async (req, res) => {
-  const { email } = req.body;
-  await User.findOneAndDelete({ email: email });
+  const { user_id } = req.body;
+  await User.destroy({where: {user_id}});
 
   res.status(200).json({ status: "Deleted" });
 };

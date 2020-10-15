@@ -28,7 +28,7 @@ exports.login = async (req, res, next) => {
   if (!email || !password) {
     res.status(404).json({ status: "failed" });
   }
-  const user = await User.findOne({ email }).select(
+  const user = await User.findOne({ where:{email} }).select(
     "+password"
   );
 

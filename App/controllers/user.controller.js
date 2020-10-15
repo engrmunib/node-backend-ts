@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { User } = require("../models/user.model");
+const catchAsync = require("../utils/catchAsync")
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -22,7 +23,7 @@ const createSendToken = (user, statusCode, req, res) => {
   });
 };
 
-exports.login = async (req, res, next) => {
+exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(404).json({ status: "failed" });
@@ -35,32 +36,32 @@ exports.login = async (req, res, next) => {
     res.status(404).json({ status: "failed" });
   }
   createSendToken(user, 200, req, res);
-};
+});
 
 //Basic CRUD
 
-exports.signup = async (req, res, next) => {
+exports.signup = catchAsync(async (req, res, next) => {
   let newUser = await User.create(req.body);
   await newUser.hashPassword();
   newUser = await newUser.save();
   createSendToken(newUser, 201, req, res);
-};
+});
 
-exports.getAllUsers = async (req, res) => {
+exports.getAllUsers = catchAsync(async (req, res) => {
   const users = await User.findAll({ attributes: { exclude: ["password"] } });
   res.status(200).json({ status: "ok", users });
-};
+});
 
-exports.updateUser = async (req, res) => {
+exports.updateUser = catchAsync(async (req, res) => {
   const {user_id} = req.body;
   await User.update(req.body,{where:{user_id}});
 
   res.status(200).json({ status: "Updated" });
-};
+});
 
-exports.deleteUser = async (req, res) => {
+exports.deleteUser = catchAsync(async (req, res) => {
   const { user_id } = req.body;
   await User.destroy({where: {user_id}});
 
   res.status(200).json({ status: "Deleted" });
-};
+});

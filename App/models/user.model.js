@@ -1,10 +1,32 @@
 const bcrypt = require("bcryptjs");
-
 const { DataTypes, Model } = require('sequelize');
+const sequelize = require('../db')
 
 class User extends Model {}
 
-
+User.init({
+  firstName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  lastName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: "Doe"
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+}, {
+  sequelize,
+  modelName: 'User',
+  timestamps:false
+});
 
 
 // userSchema.pre("save", async function (next) {

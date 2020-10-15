@@ -1,4 +1,4 @@
-const AppError = require('./utils/appError');
+const AppError = require('./appError');
 
 const handleCastErrorDB = err => {
   const message = `Invalid ${err.path}: ${err.value}.`;
@@ -47,7 +47,6 @@ const sendErrorProd = (err, req, res) => {
         message: err.message
       });
     }
-    // B) Programming or other unknown error: don't leak error details
     // 1) Log error
     console.error('ERROR ', err);
     // 2) Send generic message

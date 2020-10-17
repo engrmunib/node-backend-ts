@@ -1,7 +1,6 @@
-const express = require("express");
+import express from 'express';
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const compression = require("compression");
 const app = express();
 const errorHandler = require('./utils/errorHandler')
 
@@ -12,7 +11,6 @@ app.options("*", cors());
 
 app.use(bodyParser.json());
 
-app.use(compression());
 app.use(errorHandler);
 
 app.use("/api/user", userRoute);
@@ -25,4 +23,4 @@ app.all("*", (req, res, next) => {
 });
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

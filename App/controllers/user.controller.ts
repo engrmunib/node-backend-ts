@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken';
 const { User } = require("../models/user.model");
 const catchAsync = require("../utils/catchAsync")
 

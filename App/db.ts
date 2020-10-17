@@ -2,7 +2,7 @@ const { Sequelize } = require('sequelize');
 
 const {DATABASE, DB_USER, DB_PASS, DB_HOST, DB_PORT} = process.env;
 
-const sequelize= new Sequelize(DATABASE, DB_USER, DB_PASS, {
+const sequelize = new Sequelize(DATABASE, DB_USER, DB_PASS, {
     host: DB_HOST,
     dialect: 'mysql',
     port: DB_PORT
@@ -25,4 +25,4 @@ sequelize.migrateModelChanges = async()=>{
     }
 }
 
-module.exports = sequelize;
+export default sequelize;

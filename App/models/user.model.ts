@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const { DataTypes, Model } = require('sequelize');
-const sequelize = require('../db')
+import sequelize from './db'
 
 class User extends Model {
   async hashPassword() {  
@@ -9,8 +9,8 @@ class User extends Model {
   }
 
   async verifyPassword (
-    candidatePassword,
-    userPassword
+    candidatePassword: string,
+    userPassword: string
   ) {
     return await bcrypt.compare(candidatePassword, userPassword);
   };

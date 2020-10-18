@@ -4,10 +4,9 @@ import { Model } from "sequelize";
 import { NextFunction, Request, Response } from "express";
 
 class baseController {
-  constructor(private Model: any){
-  }
-  createOne() {
-    catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  constructor(private Model: any) {}
+  createOne = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
       const doc = await this.Model.create(req.body);
 
       res.status(201).json({
@@ -16,11 +15,10 @@ class baseController {
           data: doc,
         },
       });
-    });
-  }
-
-  updateOne() {
-    catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    }
+  );
+  updateOne = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
       const doc = await this.Model.update(req.body, {
         where: { user_id: req.body.id },
       });
@@ -35,12 +33,11 @@ class baseController {
           data: doc,
         },
       });
-    });
-  }
-  getOne() {
-    catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-      console.log('yes')
-      const doc = await this.Model.findOne(req.body.id);
+    }
+  );
+  getOne = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const doc = await this.Model.findByPk(req.body.id);
 
       if (!doc) {
         return next(new AppError("No document found with that ID", 404));
@@ -52,18 +49,18 @@ class baseController {
           data: doc,
         },
       });
-    });
-  }
-  deleteOne() {
-    catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    }
+  );
+  deleteOne = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
       await this.Model.destroy(req.body.id);
 
       res.status(204).json({
         status: "deleted",
         data: null,
       });
-    });
-  }
+    }
+  );
 }
 
 export default baseController;

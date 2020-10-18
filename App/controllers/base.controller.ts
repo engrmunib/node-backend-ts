@@ -3,6 +3,8 @@ import AppError from "./../utils/appError";
 import { Model } from "sequelize";
 import { NextFunction, Request, Response } from "express";
 
+// unstable controller
+
 class baseController {
   constructor(private Model: any) {}
   createOne = catchAsync(

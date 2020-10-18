@@ -1,42 +1,48 @@
-import jwt from 'jsonwebtoken';
-const { User } = require("../models/user.model");
-const catchAsync = require("../utils/catchAsync")
+import { NextFunction } from 'express';
+import {sign} from 'jsonwebtoken';
+import User from '../models/user.model'
+import catchAsync from '../utils/catchAsync';
+import baseController from './baseController';
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_TOKEN_EXPIRY,
-  });
-};
 
-const createSendToken = (user, statusCode, req, res) => {
-  const token = signToken(user.user_id);
+class userController extends baseController {
+  signToken(id: string | number){
+    return sign({ id }, process.env.JWT_SECRET || '', {
+      expiresIn: process.env.JWT_TOKEN_EXPIRY,
+    });
+  };
 
-  // Remove password from output
-  user.password = undefined;
-
-  res.status(statusCode).json({
-    status: "success",
-    token,
-    data: {
-      user,
-    },
-  });
-};
-
-exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    res.status(404).json({ status: "failed" });
-  }
-  const user = await User.findOne({
-    where: { email }
+  login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(404).json({ status: "failed" });
+    }
+    const user = await User.findOne({
+      where: { email }
+    });
+  
+    if (!user || !(await user.verifyPassword(password, user.password))) {
+      res.status(404).json({ status: "failed" });
+    }
+    createSendToken(user, 200, req, res);
   });
 
-  if (!user || !(await user.verifyPassword(password, user.password))) {
-    res.status(404).json({ status: "failed" });
-  }
-  createSendToken(user, 200, req, res);
-});
+  createSendToken = (user:User, statusCode: number, req: Request, res: Response) => {
+    const token = this.signToken(user.user_id);
+    // Remove password from output
+    user.password = undefined;
+  
+    res.status(statusCode).json({
+      status: "success",
+      token,
+      data: {
+        user,
+      },
+    });
+  };
+}
+
+exports.
 
 //Basic CRUD
 

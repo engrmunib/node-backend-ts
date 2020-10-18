@@ -4,9 +4,11 @@ import { Model } from "sequelize";
 import { NextFunction, Request, Response } from "express";
 
 class baseController {
-  createOne(Model: any) {
+  constructor(private Model: any){
+  }
+  createOne() {
     catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-      const doc = await Model.create(req.body);
+      const doc = await this.Model.create(req.body);
 
       res.status(201).json({
         status: "success",
@@ -17,9 +19,9 @@ class baseController {
     });
   }
 
-  updateOne(Model: any) {
+  updateOne() {
     catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-      const doc = await Model.update(req.body, {
+      const doc = await this.Model.update(req.body, {
         where: { user_id: req.body.id },
       });
 
@@ -35,9 +37,10 @@ class baseController {
       });
     });
   }
-  getOne(Model: any) {
+  getOne() {
     catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-      const doc = Model.findOne(req.body.id);
+      console.log('yes')
+      const doc = await this.Model.findOne(req.body.id);
 
       if (!doc) {
         return next(new AppError("No document found with that ID", 404));
@@ -51,9 +54,9 @@ class baseController {
       });
     });
   }
-  deleteOne(Model: any) {
+  deleteOne() {
     catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-      await Model.destroy(req.body.id);
+      await this.Model.destroy(req.body.id);
 
       res.status(204).json({
         status: "deleted",

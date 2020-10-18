@@ -7,6 +7,10 @@ import baseController from './base.controller';
 
 export default class userController extends baseController {
 
+  constructor(){
+    super(User)
+  }
+
   login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const {email, password} = req.body;
 

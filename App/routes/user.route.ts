@@ -1,15 +1,21 @@
-const express = require("express");
-const userController = require("../controllers/user.controller");
+import userController from "../controllers/user.controller";
+import express, { Router } from "express";
 
-const router = express.Router();
+export default class userRoutes {
+  router: Router;
+  controller: userController;
+  constructor() {
+    this.router = express.Router();
+    this.controller = new userController();
+  }
 
-router.post("/signup", userController.signup);
-router.post("/login", userController.login);
-
-router
-  .route('/')
-  .get(userController.getAllUsers)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser)
-
-module.exports = router;
+  routes() {
+    this.router.post("/signup", this.controller.signup);
+    this.router.post("/login", this.controller.login);
+    this.router
+      .route("/")
+      .get(this.controller.getAllUsers)
+      .patch(this.controller.updateUser)
+      .delete(this.controller.deleteUser);
+  }
+}

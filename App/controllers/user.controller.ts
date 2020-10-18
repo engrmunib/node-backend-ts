@@ -5,7 +5,7 @@ import catchAsync from '../utils/catchAsync';
 import baseController from './base.controller';
 
 
-class userController extends baseController {
+export default class userController extends baseController {
 
   login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const {email, password} = req.body;

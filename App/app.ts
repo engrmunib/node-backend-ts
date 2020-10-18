@@ -1,17 +1,25 @@
-import express from 'express';
+import express, {Application} from 'express';
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const app = express();
 const errorHandler = require('./utils/errorHandler')
 
 const userRoute = require("./routes/user.route");
 
-app.use(cors());
-app.options("*", cors());
+class App {
+  app: Application;
+  routes: Routes = new userRoute();
+  constructor(){
+    this.app = express();
+  }
+  private config(){
+    this.app.use(cors());
+    this.app.options("*", cors());
+    this.app.use(bodyParser.json());
+    this.app.use(errorHandler);
+  }
+}
 
-app.use(bodyParser.json());
 
-app.use(errorHandler);
 
 app.use("/api/user", userRoute);
 app.all("*", (req, res, next) => {
@@ -21,6 +29,5 @@ app.all("*", (req, res, next) => {
     }
   );
 });
-app.use(errorHandler);
 
 export default app;

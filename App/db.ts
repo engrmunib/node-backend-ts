@@ -31,6 +31,7 @@ const sequelize = new sqlORM(DATABASE||'', DB_USER||'', DB_PASS||'', {
   host: DB_HOST,
   dialect: "mysql",
   port: Number(DB_PORT)|| 8088,
+  logging: false
 });
 
 export default sequelize;

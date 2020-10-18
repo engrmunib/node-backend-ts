@@ -22,7 +22,7 @@ class baseController {
   updateOne = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       const doc = await this.Model.update(req.body, {
-        where: { user_id: req.body.id },
+        where: { [this.Model.primaryKey]: req.body.id },
       });
 
       if (!doc) {
@@ -49,6 +49,22 @@ class baseController {
         status: "success",
         data: {
           data: doc,
+        },
+      });
+    }
+  );
+  getAll = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const docs = await this.Model.findAll({});
+
+      if (!docs) {
+        return next(new AppError("No document found with that ID", 404));
+      }
+
+      res.status(200).json({
+        status: "success",
+        data: {
+          data: docs,
         },
       });
     }

@@ -15,6 +15,7 @@ export default class userRoutes {
     this.router.post("/login", this.controller.login);
     this.router
       .route("/")
+      // getOne is defined in Base Controller
       .post(this.controller.getOne)
       .get(this.controller.getAllUsers)
       .patch(this.controller.updateUser)

@@ -7,6 +7,7 @@ export default class userRoutes {
   constructor() {
     this.router = express.Router();
     this.controller = new userController();
+    this.routes();
   }
 
   routes() {

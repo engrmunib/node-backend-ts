@@ -1,4 +1,7 @@
 import { Sequelize, Options } from "sequelize";
+const dotenv = require("dotenv");
+
+dotenv.config({ path: ".env" });
 
 class sqlORM extends Sequelize {
   constructor(db: string, user: string, pass: string, options: Options) {

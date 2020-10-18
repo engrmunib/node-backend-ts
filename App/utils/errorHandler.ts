@@ -2,7 +2,7 @@ import AppError from "./appError";
 import { NextFunction, Request, Response } from "express";
 
 class errorHandler {
-  main = (err: any, req: Request, res: Response, next: NextFunction) => {
+  main(err: any, req: Request, res: Response, next: NextFunction){
     err.statusCode = err.statusCode || 500;
     err.status = err.status || "error";
 

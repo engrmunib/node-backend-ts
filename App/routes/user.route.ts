@@ -15,6 +15,7 @@ export default class userRoutes {
     this.router.post("/login", this.controller.login);
     this.router
       .route("/")
+      .post(this.controller.getOne)
       .get(this.controller.getAllUsers)
       .patch(this.controller.updateUser)
       .delete(this.controller.deleteUser);

@@ -37,7 +37,7 @@ class baseController {
   }
   getOne(Model: any) {
     catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-      const doc = Model.findOne(req.params.id);
+      const doc = Model.findOne(req.body.id);
 
       if (!doc) {
         return next(new AppError("No document found with that ID", 404));

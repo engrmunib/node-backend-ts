@@ -1,8 +1,9 @@
 import express, { Application, Request, Response } from 'express';
-const bodyParser = require("body-parser");
-const cors = require("cors");
 import  errorHandler from './utils/errorHandler';
 import  userRoute from './routes/user.route';
+
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
 class App {
   app: Application;

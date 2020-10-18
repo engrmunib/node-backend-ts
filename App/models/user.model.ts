@@ -2,7 +2,15 @@ import * as bcrypt from "bcryptjs"
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db'
 
-class User extends Model {
+export interface userInterface {
+  user_id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+class User extends Model<userInterface> {
   user_id!: number;
   firstName!: string;
   lastName!: string;

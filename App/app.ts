@@ -1,33 +1,32 @@
-import express, {Application} from 'express';
+import express, { Application, Request, Response } from 'express';
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const errorHandler = require('./utils/errorHandler')
-
+const errorHandler = require("./utils/errorHandler");
 const userRoute = require("./routes/user.route");
 
 class App {
   app: Application;
-  routes: Routes = new userRoute();
-  constructor(){
+  constructor() {
     this.app = express();
+    this.config();
+    this.routing();
   }
-  private config(){
+
+  private config() {
     this.app.use(cors());
     this.app.options("*", cors());
     this.app.use(bodyParser.json());
     this.app.use(errorHandler);
   }
+  
+  private routing() {
+    this.app.use("/api/user", userRoute);
+    this.app.all("*", (req: Request, res: Response) => {
+      res.status(404).send({
+        message: `Can't find ${req.originalUrl} on this server!`,
+      });
+    });
+  }
 }
 
-
-
-app.use("/api/user", userRoute);
-app.all("*", (req, res, next) => {
-  res.status(404).send(
-    {
-      message:`Can't find ${req.originalUrl} on this server!`
-    }
-  );
-});
-
-export default app;
+export default new App().app;

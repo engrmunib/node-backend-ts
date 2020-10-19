@@ -8,7 +8,6 @@ import { BaseController } from "./base.controller";
 export class AppRoutes {
 
     router: Router;
-    controller?: BaseController;
 
     constructor() {
         this.router = express.Router();

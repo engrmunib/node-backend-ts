@@ -4,9 +4,9 @@
   "description": "Example",
   "main": "server.js",
   "scripts": {
-    "test": "node server.js",
+    "test": "node server.ts",
     "tsc": "tsc",
-    "start": "node dist/app.js",
+    "start": "node dist/server.js",
     "dev": "nodemon server.ts",
     "build": "tsc -p ."
   },

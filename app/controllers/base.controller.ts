@@ -1,5 +1,5 @@
-import catchAsync from "./../utils/catchAsync";
-import AppError from "./../utils/appError";
+import catchAsync from "../utils/catchAsync";
+import AppError from "../utils/appError";
 import { Model } from "sequelize";
 import { NextFunction, Request, Response } from "express";
 

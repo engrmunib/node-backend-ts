@@ -1,5 +1,5 @@
-import app from './App/app';
-import db from './App/db';
+import app from './app/app';
+import db from './app/db';
 
 const dotenv = require("dotenv");
 

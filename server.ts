@@ -1,7 +1,7 @@
 import app from './app/app';
 import db from './app/db';
 
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
 
 dotenv.config({ path: ".env" });
 
@@ -11,6 +11,5 @@ const server = app.listen( port, () => {
   console.log(`App running on port ${port}...`);
 });
 
-db.connectionTest();
+db.testConnection();
 // db.migrateModelChanges();
-

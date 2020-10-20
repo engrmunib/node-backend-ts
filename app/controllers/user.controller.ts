@@ -11,11 +11,39 @@ export class UserController extends BaseController {
         super()
         this.model = User;
 
-        this.publicMethods['test'] = this.test;
+        this.publicMethods.push('test');
+        this.publicMethods.push('login');
     }
 
     async test() {
+        console.log(this.context?.body)
         return 'test ok';
+    }
+
+    async login() {
+        // const {
+        //     email,
+        //     password
+        // } = req.body;
+
+        // if (!email || !password) {
+        //     res.status(404).json({
+        //         status: "failed"
+        //     });
+        // }
+        // const user: User | null = await User.findOne < User > ({
+        //     where: {
+        //         email
+        //     }
+        // });
+
+        // if (!user || !(await user.verifyPassword(password))) {
+        //     res.status(404).json({
+        //         status: "failed"
+        //     });
+        // } else {
+        //     this.createSendToken(user, 200, req, res);
+        // }
     }
 
     // login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {

@@ -8,14 +8,15 @@ export class BaseController {
     
     model?: any | null;
     context?: Request;
-    publicMethods: any;
+    publicMethods: string[];
 
     constructor() {
-        this.publicMethods = {};
+        this.publicMethods = [];
     }
 
     async list() {
         console.log('list -- base controller ...!');
+        console.log(this.context?.query);
         const records = await this.model.findAll({
             // attributes: {
             //     exclude: ["password"]

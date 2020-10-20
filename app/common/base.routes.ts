@@ -53,8 +53,8 @@ export class AppRoutes {
         let resp = null;
         if (ctrl != null) {
             const method = this.getMethod(req);
-            if (method !== null && method in ctrl.publicMethods) {
-                resp = await ctrl.publicMethods[method]();
+            if (method !== null && ctrl.publicMethods.includes(method)) {
+                resp = await (ctrl as any)[method]();
                 this.sendSuccessResponse(res, resp);
             }
             else {

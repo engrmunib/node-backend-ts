@@ -1,11 +1,10 @@
-import { CatchAsync } from "../utils/catchAsync";
-// import AppError from "../utils/appError";
-// import { Model } from "sequelize";
 import { Request } from "express";
+import { Transaction } from "sequelize";
 
 
 export class BaseController {
     
+    transaction?: Transaction;
     model?: any | null;
     context?: Request;
     publicMethods: string[];
@@ -14,121 +13,86 @@ export class BaseController {
         this.publicMethods = [];
     }
 
-    async list() {
-        console.log('list -- base controller ...!');
-        console.log(this.context?.query);
-        const records = await this.model.findAll({
-            // attributes: {
-            //     exclude: ["password"]
-            // }
-        });
-        return {'data': records, 'total_records': 100}
+    async single() {
+        const id = this.context?.query.id;
+        const doc = await this.model.findByPk(id);
+        if (doc === null) {
+            throw new Error('Record not found!');
+        }
+        return doc;
     }
 
-    async single() {
-        console.log('single -- base controller ...!');
-
+    async all() {
+        const records = await this.model.findAll();
+        return records;
     }
 
     async create() {
-        console.log('create -- base controller ...!');
+        const data = this.context?.body;
+        const rec: any = {};
+        for (const k in data) {
+            if (k === this.model.primaryKeyAttribute){
+                continue;
+            }
+            let v = data[k];
+            if ((typeof v === 'string' || v instanceof String) && v === null) {
+                v = null;
+            }
+            rec[k] = data[k];
+        }
 
+        const doc = await this.model.create(rec, {
+            transaction: this.transaction
+        });
+        return doc[this.model.primaryKeyAttribute];
     }
 
     async update() {
-        console.log('update -- base controller ...!');
+        const data = this.context?.body;
+        const rec: any = {};
+        for (const k in data) {
+            if (k === this.model.primaryKeyAttribute){
+                continue;
+            }
+            let v = data[k];
+            if ((typeof v === 'string' || v instanceof String) && v === null) {
+                v = null;
+            }
+            rec[k] = data[k];
+        }
 
+        const id = this.context?.body[this.model.primaryKeyAttribute];
+
+        const d = await this.model.findByPk(id);
+        if (d === null) {
+            throw new Error('Record not found!');
+        }
+        
+        const doc = await this.model.update(rec, {
+            transaction: this.transaction,
+            where: {
+                [this.model.primaryKeyAttribute]: id
+            },
+        });
+        return doc[this.model.primaryKeyAttribute];
     }
 
     async delete() {
-        console.log('delete -- base controller ...!');
+        const id = this.context?.body.id;
 
-    }   
+        const d = await this.model.findByPk(id);
+        if (d === null) {
+            throw new Error('Record not found!');
+        }
 
-    // async createOne(req: Request, res: Response, next: NextFunction) {
-    //     const doc = await this.Model.create(req.body);
+        const doc = await d.destroy();
 
-    //     res.status(201).json({
-    //         status: "success",
-    //         data: {
-    //             data: doc,
-    //         },
-    //     });
-    // }
-
-    // createOne = catchAsync(
-    //   async (req: Request, res: Response, next: NextFunction) => {
-    //     const doc = await this.Model.create(req.body);
-
-    //     res.status(201).json({
-    //       status: "success",
-    //       data: {
-    //         data: doc,
-    //       },
-    //     });
-    //   }
-    // );
-
-    // updateOne = catchAsync(
-    //     async (req: Request, res: Response, next: NextFunction) => {
-    //         const doc = await this.Model.update(req.body, {
-    //             where: {
-    //                 [this.Model.primaryKey]: req.body.id
-    //             },
-    //         });
-
-    //         if (!doc) {
-    //             return next(new AppError("No document found with that ID", 404));
-    //         }
-
-    //         res.status(200).json({
-    //             status: "success",
-    //             data: {
-    //                 data: doc,
-    //             },
-    //         });
-    //     }
-    // );
-    // getOne = catchAsync(
-    //     async (req: Request, res: Response, next: NextFunction) => {
-    //         const doc = await this.Model.findByPk(req.body.id);
-
-    //         if (!doc) {
-    //             return next(new AppError("No document found with that ID", 404));
-    //         }
-
-    //         res.status(200).json({
-    //             status: "success",
-    //             data: {
-    //                 data: doc,
-    //             },
-    //         });
-    //     }
-    // );
-    // getAll = catchAsync(
-    //     async (req: Request, res: Response, next: NextFunction) => {
-    //         const docs = await this.Model.findAll({});
-
-    //         if (!docs) {
-    //             return next(new AppError("No document found with that ID", 404));
-    //         }
-
-    //         res.status(200).json({
-    //             status: "success",
-    //             data: {
-    //                 data: docs,
-    //             },
-    //         });
-    //     }
-    // );
-    // deleteOne = catchAsync(
-    //     async (req: Request, res: Response, next: NextFunction) => {
-    //         await this.Model.destroy(req.body.id);
-
-    //         res.status(204).json({
-    //             status: "deleted",
-    //             data: null,
-    //         });
-    //     }
-    // );
+        // const doc = await this.model.destroy({
+        //     transaction: this.transaction,
+        //     where: {
+        //         [this.model.primaryKeyAttribute]: id
+        //     },
+        // });
+        return null;
+    }
 }

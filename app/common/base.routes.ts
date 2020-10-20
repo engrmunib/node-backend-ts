@@ -3,11 +3,14 @@ import { NextFunction, Request, Response } from "express";
 import registry from "../registry";
 import { CatchAsync } from "../utils/catchAsync";
 import { BaseController } from "./base.controller";
+import sequelize from '../db'
+import { Transaction } from "sequelize/types";
 
 
 export class AppRoutes {
 
     router: Router;
+    transaction?: Transaction
 
     constructor() {
         this.router = express.Router();
@@ -20,7 +23,7 @@ export class AppRoutes {
 
         this.router
           .route("/")
-          .get(this.list)
+          .get(this.fetch)
           .put(this.create)
           .post(this.custom)
           .patch(this.update)
@@ -43,98 +46,78 @@ export class AppRoutes {
         if (Controller !== null) {
             const ctrl: BaseController = new Controller();
             ctrl.context = req;
+            ctrl.transaction = this.transaction;
             return ctrl;
         }
         return null;
     }
 
-    custom = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
-        const ctrl: BaseController | null = this.getController(req);
-        let resp = null;
-        if (ctrl != null) {
-            const method = this.getMethod(req);
-            if (method !== null && ctrl.publicMethods.includes(method)) {
-                resp = await (ctrl as any)[method]();
-                this.sendSuccessResponse(res, resp);
-            }
-            else {
-                this.sendErrorResponse(res, resp);
-            }
+    fetch = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
+        
+        let method = 'all';
+        if ('id' in req.query) {
+            method = 'single';
         }
-        else {
-            this.sendErrorResponse(res, resp);
-        }
-    }))
-
-    list = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
-        const ctrl: BaseController | null = this.getController(req);
-        let resp = null;
-        if (ctrl != null) {
-            resp = await ctrl.list();
-            this.sendSuccessResponse(res, resp);
-        }
-        else {
-            this.sendErrorResponse(res, resp);
-        }
-    }))
-
-    single = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
-        const ctrl: BaseController | null = this.getController(req);
-        let resp = null;
-        if (ctrl != null) {
-            resp = await ctrl.single();
-            this.sendSuccessResponse(res, resp);
-        }
-        else {
-            this.sendErrorResponse(res, resp);
-        }
+        
+        await this.runInTransaction(method, req, res);
     }))
 
     create = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
-        const ctrl: BaseController | null = this.getController(req);
-        let resp = null;
-        if (ctrl != null) {
-            resp = await ctrl.create();
-            this.sendSuccessResponse(res, resp);
-        }
-        else {
-            this.sendErrorResponse(res, resp);
-        }
+        await this.runInTransaction('create', req, res);
     }))
 
     update = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
-        const ctrl: BaseController | null = this.getController(req);
-        let resp = null;
-        if (ctrl != null) {
-            resp = await ctrl.update();
-            this.sendSuccessResponse(res, resp);
-        }
-        else {
-            this.sendErrorResponse(res, resp);
-        }
+        await this.runInTransaction('update', req, res);
     }))
 
     delete = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
+        await this.runInTransaction('delete', req, res);
+    }))
+
+    custom = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
+        await this.runInTransaction(this.getMethod(req), req, res);
+    }))
+
+    async runInTransaction(method: any, req: any, res: any) {
+        
         const ctrl: BaseController | null = this.getController(req);
         let resp = null;
         if (ctrl != null) {
-            resp = await ctrl.delete();
-            this.sendSuccessResponse(res, resp);
+
+            const t = await sequelize.transaction();
+            this.transaction = t;
+
+            try {
+                resp = await (ctrl as any)[method]();
+
+                await t.commit();
+
+                this.sendSuccessResponse(res, resp);
+
+            } catch (error) {
+
+                await t.rollback();
+                console.log(error);
+
+                this.sendErrorResponse(res, 500, error.message);
+            }
         }
         else {
-            this.sendErrorResponse(res, resp);
+            this.sendErrorResponse(res, 401, 'resource not found!');
         }
-    }))
+    }
 
     sendSuccessResponse(res: Response, data: any) {
+        this.transaction = undefined;
         res.status(200).json({
             status: 'Ok',
             data: data
         });
     }
 
-    sendErrorResponse(res: Response, data: any) {
-        res.status(500).json({
+    sendErrorResponse(res: Response, code: number, data: any) {
+        this.transaction = undefined;
+        res.status(code).json({
             status: 'Error',
             data: data
         });

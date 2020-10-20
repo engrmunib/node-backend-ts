@@ -1,16 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
 import { sign } from 'jsonwebtoken';
 import { User } from '../models/user.model'
-// import catchAsync from '../utils/catchAsync';
 import { BaseController } from '../common/base.controller';
 
 
 export class UserController extends BaseController {
-
     constructor() {
         super()
         this.model = User;
-
+        User.destroy
         this.publicMethods.push('test');
         this.publicMethods.push('login');
     }

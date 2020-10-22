@@ -1,6 +1,12 @@
 # Readme
 
 
+- md5 password encryption
+- user session, token, authentication
+
+
+=============================================
+
 ## Create User Table
 DROP TABLE `users`;
 CREATE TABLE `users`(
@@ -14,3 +20,5 @@ CREATE TABLE `users`(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `users` ADD UNIQUE(`username`);
+
+=============================================

@@ -7,7 +7,6 @@ export class UserController extends BaseController {
     constructor() {
         super()
         this.model = User;
-        User.destroy
         this.publicMethods.push('test');
         this.publicMethods.push('login');
     }

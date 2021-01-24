@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { Transaction } from "sequelize";
+import { Errors } from "../utils/errors";
 import { currentTime } from "../utils/functions";
 
 
@@ -16,9 +17,9 @@ export class BaseController {
 
     async single() {
         const id = this.context?.query.id;
-        const doc = await this.model.findByPk(id);
+        const doc = await this.get_record(id);
         if (doc === null) {
-            throw new Error('Record not found!');
+            throw new Error(Errors.RecordNotFound);
         }
         return doc;
     }
@@ -30,6 +31,25 @@ export class BaseController {
 
     async create() {
         const data = this.context?.body;
+        return await this.create_record(data);
+    }
+
+    async update() {
+        const data = this.context?.body;
+        return await this.update_record(data);
+    }
+
+    async delete() {
+        const id = this.context?.body.id;
+        return await this.delete_record(id);
+    }
+
+    async get_record(id: any) {
+        const doc = await this.model.findByPk(id);
+        return doc;
+    }
+
+    async create_record(data: any) {
         const rec: any = {};
         for (const k in data) {
             if (k === this.model.primaryKeyAttribute){
@@ -50,8 +70,7 @@ export class BaseController {
         return doc[this.model.primaryKeyAttribute];
     }
 
-    async update() {
-        const data = this.context?.body;
+    async update_record(data: any) {
         const rec: any = {};
         for (const k in data) {
             if (k === this.model.primaryKeyAttribute){
@@ -78,11 +97,10 @@ export class BaseController {
                 [this.model.primaryKeyAttribute]: id
             },
         });
-        return doc[this.model.primaryKeyAttribute];
+        return id;
     }
 
-    async delete() {
-        const id = this.context?.body.id;
+    async delete_record(id: any) {
 
         const d = await this.model.findByPk(id);
         if (d === null) {

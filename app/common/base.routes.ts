@@ -26,7 +26,7 @@ export class AppRoutes {
           .get(this.fetch)
         //   .put(this.create)
           .post(this.other)
-          .patch(this.update)
+        //   .patch(this.update)
           .delete(this.delete);
     }
 
@@ -66,9 +66,9 @@ export class AppRoutes {
     //     await this.runInTransaction('create', req, res);
     // }))
 
-    update = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
-        await this.runInTransaction('update', req, res);
-    }))
+    // update = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
+    //     await this.runInTransaction('update', req, res);
+    // }))
 
     delete = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
         await this.runInTransaction('delete', req, res);
@@ -78,7 +78,7 @@ export class AppRoutes {
         await this.runInTransaction(this.getMethod(req), req, res);
     }))
 
-    async runInTransaction(method: any, req: any, res: any) {
+    async runInTransaction(method: any, req: Request, res: Response) {
         
         const t = await sequelize.transaction();
         this.transaction = t;
@@ -105,7 +105,7 @@ export class AppRoutes {
             await t.rollback();
             console.log(error);
 
-            this.sendErrorResponse(res, 500, 'internal server error!');
+            this.sendErrorResponse(res, 500, error.message);
         }
     }
 
@@ -113,15 +113,17 @@ export class AppRoutes {
         this.transaction = undefined;
         res.status(200).json({
             status: 'Ok',
+            message: 'Sucsess',
             data: data
         });
     }
 
-    sendErrorResponse(res: Response, code: number, data: any) {
+    sendErrorResponse(res: Response, code: number, msg: any) {
         this.transaction = undefined;
         res.status(code).json({
             status: 'Error',
-            data: data
+            message: msg,
+            data: null
         });
     }
 }

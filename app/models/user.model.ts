@@ -11,14 +11,11 @@ export class User extends Model {
     phone!: string;
     address!: string;
 
-    async hashPassword() {
-        // Hash the password with cost of 12
-        this.password = await bcrypt.hash(this.password || '', 12);
+    toJSON(): any {
+        const data: any = super.toJSON();
+        // delete data.password;
+        return data;
     }
-
-    async verifyPassword(candidatePassword: string) {
-        return await bcrypt.compare(candidatePassword, this.password);
-    };
 
 }
 

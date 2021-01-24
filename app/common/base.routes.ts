@@ -24,8 +24,8 @@ export class AppRoutes {
         this.router
           .route("/")
           .get(this.fetch)
-          .put(this.create)
-          .post(this.custom)
+        //   .put(this.create)
+          .post(this.other)
           .patch(this.update)
           .delete(this.delete);
     }
@@ -62,9 +62,9 @@ export class AppRoutes {
         await this.runInTransaction(method, req, res);
     }))
 
-    create = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
-        await this.runInTransaction('create', req, res);
-    }))
+    // create = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
+    //     await this.runInTransaction('create', req, res);
+    // }))
 
     update = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
         await this.runInTransaction('update', req, res);
@@ -74,36 +74,38 @@ export class AppRoutes {
         await this.runInTransaction('delete', req, res);
     }))
 
-    custom = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
+    other = CatchAsync((async (req: Request, res: Response, next: NextFunction) => {
         await this.runInTransaction(this.getMethod(req), req, res);
     }))
 
     async runInTransaction(method: any, req: any, res: any) {
         
+        const t = await sequelize.transaction();
+        this.transaction = t;
+
         const ctrl: BaseController | null = this.getController(req);
-        let resp = null;
-        if (ctrl != null) {
-
-            const t = await sequelize.transaction();
-            this.transaction = t;
-
-            try {
-                resp = await (ctrl as any)[method]();
-
-                await t.commit();
-
-                this.sendSuccessResponse(res, resp);
-
-            } catch (error) {
-
-                await t.rollback();
-                console.log(error);
-
-                this.sendErrorResponse(res, 500, error.message);
-            }
-        }
-        else {
+        if (method == null || ctrl == null) {
             this.sendErrorResponse(res, 401, 'resource not found!');
+            return;
+        }
+
+        if (!ctrl.publicMethods.includes(method)) {
+            this.sendErrorResponse(res, 401, 'resource not found!');
+            return;
+        }
+
+        try {
+            let resp = await (ctrl as any)[method]();
+            await t.commit();
+
+            this.sendSuccessResponse(res, resp);
+
+        } catch (error) {
+
+            await t.rollback();
+            console.log(error);
+
+            this.sendErrorResponse(res, 500, 'internal server error!');
         }
     }
 

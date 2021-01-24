@@ -2,7 +2,8 @@ import AppError from "./appError";
 import { NextFunction, Request, Response } from "express";
 
 
-class errorHandler {
+class ErrorHandler {
+    
     main(err: any, req: Request, res: Response, next: NextFunction) {
         err.statusCode = err.statusCode || 500;
         err.status = err.status || "error";
@@ -88,4 +89,4 @@ class errorHandler {
     };
 }
 
-export default new errorHandler().main;
+export default new ErrorHandler().main;

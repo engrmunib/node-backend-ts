@@ -1,5 +1,5 @@
 import express, { Application, Request, Response } from 'express';
-import errorHandler from './utils/errorHandler';
+import ErrorHandler from './utils/errorHandler';
 import bodyParser from "body-parser";
 import registry from './registry';
 import { AppRoutes } from './common/base.routes';
@@ -18,7 +18,7 @@ class App {
 
     private config() {
         this.app.use(bodyParser.json());
-        this.app.use(errorHandler);
+        this.app.use(ErrorHandler);
     }
 
     private routing() {

@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { Transaction } from "sequelize";
+import { currentTime } from "../utils/functions";
 
 
 export class BaseController {
@@ -10,7 +11,7 @@ export class BaseController {
     publicMethods: string[];
 
     constructor() {
-        this.publicMethods = [];
+        this.publicMethods = ['single', 'all', 'create', 'update', 'delete'];
     }
 
     async single() {
@@ -41,6 +42,8 @@ export class BaseController {
             rec[k] = data[k];
         }
 
+        rec.date_added = currentTime();
+        rec.date_updated = currentTime();
         const doc = await this.model.create(rec, {
             transaction: this.transaction
         });
@@ -68,6 +71,7 @@ export class BaseController {
             throw new Error('Record not found!');
         }
         
+        rec.date_updated = currentTime();
         const doc = await this.model.update(rec, {
             transaction: this.transaction,
             where: {
@@ -93,6 +97,7 @@ export class BaseController {
         //         [this.model.primaryKeyAttribute]: id
         //     },
         // });
+
         return null;
     }
 }

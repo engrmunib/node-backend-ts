@@ -50,6 +50,14 @@ User.init({
         type: DataTypes.STRING(512),
         allowNull: true,
     },
+    date_added: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+    },
+    date_updated: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+    },
 }, {
     sequelize,
     modelName: 'users',

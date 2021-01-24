@@ -16,6 +16,8 @@ CREATE TABLE `users`(
  `name` varchar(128) NOT NULL,
  `phone` varchar(11) NULL,
  `address` varchar(512),
+ `date_added` bigint NULL,
+ `date_updated` bigint NULL,
  PRIMARY KEY(`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

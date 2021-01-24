@@ -13,7 +13,7 @@ CREATE TABLE `users`(
  `user_id` int NOT NULL AUTO_INCREMENT,
  `username` varchar(32) NOT NULL,
  `password` varchar(32) NOT NULL,
- `name` varchar(128) NOT NULL,
+ `name` varchar(128) NULL,
  `phone` varchar(11) NULL,
  `address` varchar(512),
  `date_added` bigint NULL,

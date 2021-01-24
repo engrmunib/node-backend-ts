@@ -1,4 +1,10 @@
 
-export class Errors {
-    static RecordNotFound = 'Record Not Found';
+export default class AppError extends Error {
+
+    constructor(private code: number, message: string) {
+        super(message);
+        this.code = code;
+
+        Error.captureStackTrace(this, this.constructor);
+    }
 }

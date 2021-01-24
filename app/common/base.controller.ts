@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { Transaction } from "sequelize";
-import { Errors } from "../utils/errors";
+import AppError from "../utils/errors";
 import { currentTime } from "../utils/functions";
 
 
@@ -19,7 +19,7 @@ export class BaseController {
         const id = this.context?.query.id;
         const doc = await this.get_record(id);
         if (doc === null) {
-            throw new Error(Errors.RecordNotFound);
+            throw new AppError(404, 'Record Not Found');
         }
         return doc;
     }

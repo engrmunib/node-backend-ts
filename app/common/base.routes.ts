@@ -17,7 +17,7 @@ export class AppRoutes {
         this.routes();
     }
 
-    private routes() {
+    routes() {
         
         // this.router.post("/test", this.test);
 
@@ -34,7 +34,7 @@ export class AppRoutes {
         const chunks = req.baseUrl.split('/');
         let method = null;
         if (chunks.length === 4) {
-            method = chunks[3];
+            method = chunks[3].toLowerCase();
         }
         return method;
     }
@@ -105,7 +105,7 @@ export class AppRoutes {
             await t.rollback();
             console.log(error);
 
-            this.sendErrorResponse(res, 500, error.message);
+            this.sendErrorResponse(res, error.code || 500, error.message);
         }
     }
 

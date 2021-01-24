@@ -1,21 +1,21 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db'
+import md5 from "md5"
 
 
 export class User extends Model {
     user_id!: number;
     username!: string;
     password!: string;
-    name ? : string;
-    phone!: string;
-    address!: string;
+    name? : string;
+    phone?: string;
+    address?: string;
+    date_added?: number;
+    date_updated?: number;
 
-    toJSON(): any {
-        const data: any = super.toJSON();
-        // delete data.password;
-        return data;
+    verifyPassword(password: string) {
+        return (this.password === md5(password));
     }
-
 }
 
 User.init({

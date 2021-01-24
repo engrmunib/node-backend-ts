@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import registry from './registry';
 import { AppRoutes } from './common/base.routes';
 import { UserController } from './controllers/user.controller';
+import { AuthRoutes } from './routes/auth.route';
 
 
 class App {
@@ -27,6 +28,7 @@ class App {
         registry.registerController('users', UserController);
         // add other here ...
 
+        this.app.use("/auth/*", new AuthRoutes().router);
         this.app.use("/api/*", new AppRoutes().router);
 
         this.app.all("*", (req: Request, res: Response) => {

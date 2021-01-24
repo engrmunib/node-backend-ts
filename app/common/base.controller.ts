@@ -5,7 +5,7 @@ import { currentTime } from "../utils/functions";
 
 
 export class BaseController {
-    
+    session?: any;
     transaction?: Transaction;
     model?: any | null;
     context?: Request;

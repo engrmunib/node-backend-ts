@@ -78,23 +78,36 @@ export class AppRoutes {
         await this.runInTransaction(this.getMethod(req), req, res);
     }))
 
+    async decodeSession(req: Request) {
+        const token = req.headers.authorization;
+
+        return null;
+    }
+
     async runInTransaction(method: any, req: Request, res: Response) {
         
         const t = await sequelize.transaction();
         this.transaction = t;
 
+        const session = await this.decodeSession(req);
+        if (session == null) {
+            this.sendErrorResponse(res, 401, 'unauthorized!');
+            return;
+        }
+
         const ctrl: BaseController | null = this.getController(req);
         if (method == null || ctrl == null) {
-            this.sendErrorResponse(res, 401, 'resource not found!');
+            this.sendErrorResponse(res, 404, 'resource not found!');
             return;
         }
 
         if (!ctrl.publicMethods.includes(method)) {
-            this.sendErrorResponse(res, 401, 'resource not found!');
+            this.sendErrorResponse(res, 404, 'resource not found!');
             return;
         }
 
         try {
+            ctrl.session = session;
             let resp = await (ctrl as any)[method]();
             await t.commit();
 

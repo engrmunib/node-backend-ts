@@ -1,4 +1,3 @@
-import * as bcrypt from "bcryptjs"
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db'
 
